@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\Building\BuildingManager.cs" />
     <Compile Include="Assets\Scripts\Core\EventManager.cs" />
     <Compile Include="Assets\Scripts\Core\GameManager.cs" />
+    <Compile Include="Assets\Scripts\UI\BuildingPlacementController.cs" />
     <Compile Include="Assets\Scripts\GameBootstrapper.cs" />
     <Compile Include="Assets\Scripts\Resource\ResourceNetwork.cs" />
     <Compile Include="Assets\Scripts\Core\SaveSystem.cs" />

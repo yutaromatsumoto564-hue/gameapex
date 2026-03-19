@@ -5,7 +5,8 @@ using ARIA.Card;
 
 namespace ARIA.UI
 {
-    public class CardSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+    public class CardSlotUI : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler,
+                              IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [Header("UI Components")]
         public Image CardImage;
@@ -194,6 +195,32 @@ namespace ARIA.UI
                 case CardRarity.Epic: return EpicColor;
                 case CardRarity.Legendary: return LegendaryColor;
                 default: return Color.white;
+            }
+        }
+        
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (currentCard == null || currentCard.Type != CardType.Building) return;
+
+            BuildingPlacementController.Instance?.StartDragPreview(currentCard);
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (currentCard == null || currentCard.Type != CardType.Building) return;
+
+            BuildingPlacementController.Instance?.UpdateDragPreview(eventData.position);
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (currentCard == null || currentCard.Type != CardType.Building) return;
+
+            bool success = BuildingPlacementController.Instance?.EndDragPreview() ?? false;
+            
+            if (success)
+            {
+                CardManager.Instance.RemoveCard(currentCard.CardId, 1);
             }
         }
     }
