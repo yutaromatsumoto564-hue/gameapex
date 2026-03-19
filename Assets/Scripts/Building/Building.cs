@@ -188,9 +188,9 @@ namespace ARIA.Building
                 }
                 else
                 {
-                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部强转为 Trigger
-                    col.isTrigger = true;
-                    Debug.Log($"[Building] {gameObject.name} 检测到范围圈 {col.GetType().Name}，已强制设为 Trigger。");
+                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部移除，避免影响其他建筑
+                    Destroy(col);
+                    Debug.Log($"[Building] {gameObject.name} 移除了超出范围的碰撞体 {col.GetType().Name}。");
                 }
             }
 
