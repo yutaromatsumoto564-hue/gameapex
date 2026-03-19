@@ -171,36 +171,35 @@ namespace ARIA.Building
             originalScale = transform.localScale;
             originalColor = spriteRenderer.color;
 
-            // 2. 获取所有碰撞体并强制分类
+            // 2. 处理所有碰撞体
             Collider2D[] allColliders = GetComponents<Collider2D>();
             bool foundMainCollider = false;
 
             foreach (var col in allColliders)
             {
-                // 逻辑：如果是 BoxCollider2D 且尺寸接近数据定义的 Size，则视为"实体"
-                if (col is BoxCollider2D box &&
-                    Mathf.Approximately(box.size.x, Data.SizeX) &&
-                    Mathf.Approximately(box.size.y, Data.SizeY))
+                if (col is BoxCollider2D box)
                 {
+                    // 强制设置所有BoxCollider2D为1x1大小
+                    box.size = new Vector2(1, 1);
                     box.isTrigger = false;
                     foundMainCollider = true;
-                    Debug.Log($"[Building] {gameObject.name} 的实体碰撞体已就绪。");
+                    Debug.Log($"[Building] {gameObject.name} 的BoxCollider2D已设置为1x1大小。");
                 }
                 else
                 {
-                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部移除，避免影响其他建筑
+                    // 移除所有非BoxCollider2D的碰撞体
                     Destroy(col);
                     Debug.Log($"[Building] {gameObject.name} 移除了超出范围的碰撞体 {col.GetType().Name}。");
                 }
             }
 
-            // 3. 防呆：如果完全没找到合适的 BoxCollider，就动态补一个
+            // 3. 防呆：如果完全没找到BoxCollider，就动态补一个1x1大小的
             if (!foundMainCollider)
             {
                 BoxCollider2D newBox = gameObject.AddComponent<BoxCollider2D>();
-                newBox.size = new Vector2(Data.SizeX, Data.SizeY);
+                newBox.size = new Vector2(1, 1); // 固定为1x1大小
                 newBox.isTrigger = false;
-                Debug.LogWarning($"[Building] {gameObject.name} 未找到匹配尺寸的 BoxCollider，已自动创建。");
+                Debug.LogWarning($"[Building] {gameObject.name} 未找到BoxCollider，已自动创建1x1大小的碰撞体。");
             }
 
             IsActive = true;
