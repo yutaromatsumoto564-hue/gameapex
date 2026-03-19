@@ -33,6 +33,9 @@ namespace ARIA.Building
 
         private void Start()
         {
+            // 【核心修复】：让鼠标点击自动穿透所有的"范围检测圈(Trigger)"，只命中建筑实体！
+            Physics2D.queriesHitTriggers = false;
+
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
             {
