@@ -20,6 +20,7 @@ namespace ARIA.Resource
 
         [Header("Network Capacity")]
         public int BaseCapacity = 100;
+        private int additionalCapacity = 0;
 
         public event Action<string, int> OnResourceChanged;
         public event Action OnResourcesUpdated;
@@ -185,18 +186,18 @@ namespace ARIA.Resource
 
         public int GetTotalCapacity()
         {
-            int capacity = BaseCapacity;
+            return BaseCapacity + additionalCapacity;
+        }
 
-            var storageBuildings = Building.BuildingManager.Instance?.GetBuildingsByCategory(Building.BuildingCategory.Storage);
-            if (storageBuildings != null)
-            {
-                foreach (var building in storageBuildings)
-                {
-                    capacity += building.Data.StorageCapacity;
-                }
-            }
+        public void AddCapacity(int amount)
+        {
+            additionalCapacity += amount;
+        }
 
-            return capacity;
+        public void RemoveCapacity(int amount)
+        {
+            additionalCapacity -= amount;
+            if (additionalCapacity < 0) additionalCapacity = 0;
         }
 
         public int GetTotalStored()

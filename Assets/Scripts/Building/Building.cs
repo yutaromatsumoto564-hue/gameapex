@@ -2,10 +2,10 @@ using UnityEngine;
 using System;
 using ARIA.Core;
 using ARIA.Resource;
-using ARIA.Power;
 
 namespace ARIA.Building
 {
+    [RequireComponent(typeof(BoxCollider2D))]
     public class Building : MonoBehaviour
     {
         [Header("Building Info")]
@@ -14,194 +14,142 @@ namespace ARIA.Building
         public Vector2Int GridPosition;
 
         [Header("State")]
-        public int CurrentHealth;
         public bool IsActive = true;
-        public bool IsPowered = true;
-        public bool IsConnectedToNetwork = true;
-        public bool IsProducing = false;
 
-        [Header("Production")]
-        public float ProductionProgress;
-        public float ProductionTimer;
+        [Header("Progress State")]
+        public float CurrentProgress = 0f;
+        public bool IsFull = false;
 
-        [Header("Defense")]
-        public float AttackTimer;
-        public GameObject Target;
-        
         [Header("Effects")]
         public GameObject BuildEffectPrefab;
         public GameObject UpgradeEffectPrefab;
         public GameObject ProductionEffectPrefab;
-        
-        [Header("Repair")]
-        public bool AutoRepair = false;
-        public float RepairRate = 1f;
-        public float RepairTimer = 0f;
 
-        public event Action<int> OnHealthChanged;
-        public event Action<bool> OnActiveStateChanged;
         public event Action<float> OnProductionProgress;
 
         private SpriteRenderer spriteRenderer;
+        private Vector3 originalScale;
         private Color originalColor;
 
-        public void Initialize(int instanceId, BuildingData data, Vector2Int gridPosition)
+        private void Start()
         {
-            InstanceId = instanceId;
-            Data = data;
-            GridPosition = gridPosition;
-            CurrentHealth = data.MaxHealth;
-            IsActive = true;
-            ProductionProgress = 0f;
-            ProductionTimer = 0f;
-
-            transform.position = BuildingManager.Instance.GetWorldPosition(gridPosition, Data.SizeX, Data.SizeY);
-
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
             {
                 spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             }
             originalColor = spriteRenderer.color;
-
-            // 应用建筑大小缩放
-            Vector3 scale = new Vector3(data.SizeX, data.SizeY, 1f);
-            transform.localScale = scale;
-            Debug.Log($"[建筑缩放] {data.BuildingName} 大小: {data.SizeX}x{data.SizeY}, 缩放: {scale}");
+            originalScale = transform.localScale;
             
-            // 检查资源产出配置
-            if (data.Outputs != null && data.Outputs.Count > 0)
-            {
-                Debug.Log($"[建筑初始化] {data.BuildingName} 配置了 {data.Outputs.Count} 个产出，生产时间: {data.ProductionTime}秒");
-            }
-            else
-            {
-                Debug.Log($"[建筑初始化] {data.BuildingName} 没有配置资源产出");
-            }
+            // 自动适配 Collider 的大小，确保点击区域和建筑一样大
+            BoxCollider2D col = GetComponent<BoxCollider2D>();
+            col.size = new Vector2(Data.SizeX, Data.SizeY);
         }
 
         private void Update()
         {
             if (!IsActive) return;
 
-            UpdatePowerStatus();
-            UpdateNetworkStatus();
-
-            if (!IsPowered && Data.PowerConsumption > 0) return;
-
-            if (!IsConnectedToNetwork && Data.Category != BuildingCategory.Defense) return;
-
-            if (AutoRepair && CurrentHealth < Data.MaxHealth)
+            // 只有生产和资源类建筑才走进度条逻辑
+            if (Data.Category == BuildingCategory.Production || Data.Category == BuildingCategory.Resource)
             {
-                UpdateAutoRepair();
-            }
-
-            switch (Data.Category)
-            {
-                case BuildingCategory.Production:
-                    UpdateProduction();
-                    break;
-                case BuildingCategory.Resource:
-                    UpdateResourceGathering();
-                    break;
-                case BuildingCategory.Defense:
-                    UpdateDefense();
-                    break;
-                case BuildingCategory.Power:
-                    UpdatePowerGeneration();
-                    break;
-            }
-        }
-        
-        private void UpdateAutoRepair()
-        {
-            RepairTimer += Time.deltaTime;
-            if (RepairTimer >= 1f / RepairRate)
-            {
-                Repair(1);
-                RepairTimer = 0f;
+                UpdatePassiveProgress();
             }
         }
 
-        private void UpdatePowerStatus()
+        private void UpdatePassiveProgress()
         {
-            if (Data.PowerConsumption <= 0)
+            // 1. 检查是否爆仓 (如果有输出产物的话)
+            if (Data.Outputs != null && Data.Outputs.Count > 0)
             {
-                IsPowered = true;
-                return;
-            }
-
-            IsPowered = PowerManager.Instance?.HasEnoughPower() ?? false;
-            UpdateVisualState();
-        }
-
-        private void UpdateNetworkStatus()
-        {
-            IsConnectedToNetwork = ResourceNetwork.Instance?.IsBuildingConnected(this) ?? false;
-            UpdateVisualState();
-        }
-
-        private void UpdateProduction()
-        {
-            if (Data.Inputs.Count == 0 && Data.Outputs.Count == 0) return;
-
-            if (!CanProduce())
-            {
-                IsProducing = false;
-                return;
-            }
-
-            IsProducing = true;
-            ProductionTimer += Time.deltaTime;
-            ProductionProgress = ProductionTimer / Data.ProductionTime;
-
-            OnProductionProgress?.Invoke(ProductionProgress);
-
-            if (ProductionTimer >= Data.ProductionTime)
-            {
-                Produce();
-                ProductionTimer = 0f;
-                ProductionProgress = 0f;
-            }
-        }
-
-        private bool CanProduce()
-        {
-            foreach (var input in Data.Inputs)
-            {
-                if (!ResourceManager.Instance.HasResource(input.ResourceId, input.Amount))
+                int totalOutput = 0;
+                foreach (var output in Data.Outputs) totalOutput += output.Amount;
+                
+                if (!ResourceManager.Instance.HasAvailableCapacity(totalOutput))
                 {
-                    return false;
+                    IsFull = true;
+                    // 爆仓时变灰
+                    if (spriteRenderer != null)
+                    {
+                        spriteRenderer.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+                    }
+                    return; // 停止进度增长
                 }
             }
 
-            int totalOutput = 0;
-            foreach (var output in Data.Outputs) totalOutput += output.Amount;
-            
-            if (totalOutput > 0 && !ResourceManager.Instance.HasAvailableCapacity(totalOutput))
+            IsFull = false;
+            if (spriteRenderer != null)
             {
-                return false;
+                spriteRenderer.color = originalColor; // 恢复正常颜色
             }
 
-            return true;
+            // 2. 被动增加进度
+            CurrentProgress += Data.PassiveProgressPerSecond * Time.deltaTime;
+
+            // 3. 检查是否达到产出要求
+            CheckAndProduce();
         }
 
-        private void Produce()
+        private void CheckAndProduce()
         {
-            foreach (var input in Data.Inputs)
+            if (CurrentProgress >= Data.ProgressRequired)
             {
-                ResourceManager.Instance.RemoveResource(input.ResourceId, input.Amount);
-            }
+                // 扣除所需进度 (保留溢出的部分)
+                CurrentProgress -= Data.ProgressRequired;
 
-            foreach (var output in Data.Outputs)
-            {
-                ResourceManager.Instance.AddResource(output.ResourceId, output.Amount);
+                // 自动上传到全局资源库！无需连线！
+                foreach (var output in Data.Outputs)
+                {
+                    ResourceManager.Instance.AddResource(output.ResourceId, output.Amount);
+                }
+                
+                // 触发生产完成特效
+                PlayProductionEffect();
             }
-            
-            // 触发生产完成特效
-            PlayProductionEffect();
         }
-        
+
+        // Unity 原生方法：当鼠标在当前物体的 Collider 范围内按下时触发
+        private void OnMouseDown()
+        {
+            if (!IsActive || IsFull) return; // 如果爆仓或停机了，点击无效
+
+            // 1. 增加进度
+            CurrentProgress += Data.ClickProgress;
+
+            // 2. 立即检查是否满足产出条件
+            CheckAndProduce();
+
+            // 3. 视觉反馈：瞬间缩小（配合后面的缩放恢复代码，产生 Q弹 的手感）
+            transform.localScale = originalScale * 0.85f;
+        }
+
+        // 用于恢复点击导致的缩放变形
+        private void LateUpdate()
+        {
+            if (transform.localScale != originalScale)
+            {
+                // 平滑弹回原来的大小
+                transform.localScale = Vector3.Lerp(transform.localScale, originalScale, Time.deltaTime * 15f);
+            }
+        }
+
+        public void Initialize(int instanceId, BuildingData data, Vector2Int gridPosition)
+        {
+            InstanceId = instanceId;
+            Data = data;
+            GridPosition = gridPosition;
+
+            // 计算并设置建筑的世界位置
+            Vector2 worldPos = BuildingManager.Instance.GetWorldPosition(gridPosition, data.SizeX, data.SizeY);
+            transform.position = new Vector3(worldPos.x, worldPos.y, 0f);
+
+            // 设置建筑缩放
+            transform.localScale = new Vector3(data.SizeX, data.SizeY, 1f);
+            originalScale = transform.localScale;
+
+            IsActive = true;
+        }
+
         public void PlayBuildEffect()
         {
             if (BuildEffectPrefab != null)
@@ -229,103 +177,9 @@ namespace ARIA.Building
             }
         }
 
-        private void UpdateResourceGathering()
-        {
-            if (Data.Outputs == null || Data.Outputs.Count == 0) return;
-            
-            int totalOutput = 0;
-            foreach (var output in Data.Outputs) totalOutput += output.Amount;
-            
-            if (!ResourceManager.Instance.HasAvailableCapacity(totalOutput))
-            {
-                IsProducing = false;
-                return;
-            }
-
-            IsProducing = true;
-            ProductionTimer += Time.deltaTime;
-
-            if (ProductionTimer >= Data.ProductionTime)
-            {
-                foreach (var output in Data.Outputs)
-                {
-                    ResourceManager.Instance.AddResource(output.ResourceId, output.Amount);
-                    Debug.Log($"[资源生产] {Data.BuildingName} 生产了 {output.Amount} {output.ResourceId}");
-                }
-                ProductionTimer = 0f;
-            }
-        }
-
-        private void UpdateDefense()
-        {
-            // Defense functionality will be implemented when enemy system is added
-        }
-
-        private void UpdatePowerGeneration()
-        {
-            // Power is handled by PowerManager
-        }
-
-        public void TakeDamage(int damage)
-        {
-            CurrentHealth -= damage;
-            OnHealthChanged?.Invoke(CurrentHealth);
-
-            EventManager.Instance?.TriggerEvent(GameEvents.BUILDING_DAMAGED, this, damage);
-
-            UpdateVisualState();
-
-            if (CurrentHealth <= 0)
-            {
-                Destroy();
-            }
-        }
-
-        public void Repair(int amount)
-        {
-            CurrentHealth = Mathf.Min(CurrentHealth + amount, Data.MaxHealth);
-            OnHealthChanged?.Invoke(CurrentHealth);
-            UpdateVisualState();
-        }
-
-        private void Destroy()
-        {
-            EventManager.Instance?.TriggerEvent(GameEvents.BUILDING_DESTROYED, this);
-            BuildingManager.Instance?.RemoveBuilding(this);
-        }
-
-        private void UpdateVisualState()
-        {
-            if (spriteRenderer == null) return;
-
-            float healthPercent = (float)CurrentHealth / Data.MaxHealth;
-
-            if (healthPercent <= 0.25f)
-            {
-                spriteRenderer.color = new Color(1f, 0.3f, 0.3f, 1f);
-            }
-            else if (!IsConnectedToNetwork && Data.Category != BuildingCategory.Defense)
-            {
-                spriteRenderer.color = new Color(0.8f, 0.4f, 0.4f, 0.8f);
-            }
-            else if (!IsPowered && Data.PowerConsumption > 0)
-            {
-                spriteRenderer.color = new Color(0.5f, 0.5f, 0.5f, 1f);
-            }
-            else if (!IsProducing && (Data.Category == BuildingCategory.Production || Data.Category == BuildingCategory.Resource))
-            {
-                spriteRenderer.color = new Color(0.8f, 0.8f, 0.8f, 1f);
-            }
-            else
-            {
-                spriteRenderer.color = originalColor;
-            }
-        }
-
         public void SetActive(bool active)
         {
             IsActive = active;
-            OnActiveStateChanged?.Invoke(IsActive);
         }
 
         private void OnDrawGizmosSelected()
@@ -334,18 +188,6 @@ namespace ARIA.Building
             {
                 Gizmos.color = Color.green;
                 Gizmos.DrawWireCube(transform.position, new Vector3(Data.SizeX, Data.SizeY, 0.1f));
-
-                if (Data.AttackRange > 0)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawWireSphere(transform.position, Data.AttackRange);
-                }
-
-                if (Data.NetworkRange > 0)
-                {
-                    Gizmos.color = Color.blue;
-                    Gizmos.DrawWireSphere(transform.position, Data.NetworkRange);
-                }
             }
         }
     }

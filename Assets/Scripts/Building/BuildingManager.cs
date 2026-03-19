@@ -108,6 +108,12 @@ namespace ARIA.Building
 
             building.Initialize(nextBuildingInstanceId++, buildingData, position);
             
+            // 如果是仓库，添加容量
+            if (buildingData.Category == BuildingCategory.Storage)
+            {
+                Resource.ResourceManager.Instance.AddCapacity(buildingData.StorageCapacity);
+            }
+            
             for (int x = position.x; x < position.x + sizeX; x++)
             {
                 for (int y = position.y; y < position.y + sizeY; y++)
@@ -158,6 +164,12 @@ namespace ARIA.Building
             }
 
             allBuildings.Remove(building);
+
+            // 如果是仓库，移除容量
+            if (building.Data.Category == BuildingCategory.Storage)
+            {
+                Resource.ResourceManager.Instance.RemoveCapacity(building.Data.StorageCapacity);
+            }
 
             if (building.Data.PowerGeneration > 0)
             {

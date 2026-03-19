@@ -28,6 +28,16 @@ namespace ARIA.Building
         public List<ResourceIO> Inputs = new List<ResourceIO>();
         public List<ResourceIO> Outputs = new List<ResourceIO>();
         
+        [Header("Production & Progression")]
+        [Tooltip("单次产出所需的总进度 (如：10)")]
+        public float ProgressRequired = 10f;
+        
+        [Tooltip("被动每秒增加的进度 (如：1点/秒)")]
+        public float PassiveProgressPerSecond = 1f;
+        
+        [Tooltip("玩家单次点击增加的进度 (默认：1)")]
+        public float ClickProgress = 1f;
+        
         [Header("Defense")]
         public int Damage = 0;
         public float AttackRange = 0f;
