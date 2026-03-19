@@ -31,10 +31,15 @@ namespace ARIA.Building
         private Vector3 originalScale;
         private Color originalColor;
 
-        private void Start()
+        private void Awake()
         {
-            // 核心修复：射线检测穿透所有 Trigger
+            // 1. 确保全局设置正确
             Physics2D.queriesHitTriggers = false;
+
+            if (Data == null) {
+                Debug.LogError($"[Building] {gameObject.name} 缺少 BuildingData 数据！");
+                return;
+            }
 
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
@@ -43,39 +48,37 @@ namespace ARIA.Building
             }
             originalColor = spriteRenderer.color;
             originalScale = transform.localScale;
-            
-            // 1. 获取当前物体上所有的碰撞体
+
+            // 2. 获取所有碰撞体并强制分类
             Collider2D[] allColliders = GetComponents<Collider2D>();
-            
-            // 2. 寻找或创建一个"标准实体碰撞体"
-            // 这个碰撞体必须和建筑尺寸(SizeX, SizeY)严格一致，用于判定位置占用
-            BoxCollider2D mainBodyCollider = null;
+            bool foundMainCollider = false;
 
             foreach (var col in allColliders)
             {
-                // 如果发现一个 BoxCollider 且尺寸正好等于建筑尺寸，我们认为它是"本体"
-                if (col is BoxCollider2D box && Data != null &&
+                // 逻辑：如果是 BoxCollider2D 且尺寸接近数据定义的 Size，则视为"实体"
+                if (col is BoxCollider2D box &&
                     Mathf.Approximately(box.size.x, Data.SizeX) &&
                     Mathf.Approximately(box.size.y, Data.SizeY))
                 {
-                    mainBodyCollider = box;
-                    mainBodyCollider.isTrigger = false; // 只有它不是 Trigger
+                    box.isTrigger = false;
+                    foundMainCollider = true;
+                    Debug.Log($"[Building] {gameObject.name} 的实体碰撞体已就绪。");
                 }
                 else
                 {
-                    // 【关键修复】：所有其他的碰撞体（比如巨大的圆形、没调好的方框）
-                    // 全部强制转为 Trigger，这样它们就挡不住鼠标点击了
+                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部强转为 Trigger
                     col.isTrigger = true;
+                    Debug.Log($"[Building] {gameObject.name} 检测到范围圈 {col.GetType().Name}，已强制设为 Trigger。");
                 }
             }
 
-            // 3. 如果没找到合适的本体碰撞体，代码自动补一个完美的
-            if (mainBodyCollider == null && Data != null)
+            // 3. 防呆：如果完全没找到合适的 BoxCollider，就动态补一个
+            if (!foundMainCollider)
             {
-                mainBodyCollider = gameObject.AddComponent<BoxCollider2D>();
-                mainBodyCollider.size = new Vector2(Data.SizeX, Data.SizeY);
-                mainBodyCollider.offset = Vector2.zero;
-                mainBodyCollider.isTrigger = false;
+                BoxCollider2D newBox = gameObject.AddComponent<BoxCollider2D>();
+                newBox.size = new Vector2(Data.SizeX, Data.SizeY);
+                newBox.isTrigger = false;
+                Debug.LogWarning($"[Building] {gameObject.name} 未找到匹配尺寸的 BoxCollider，已自动创建。");
             }
         }
 
