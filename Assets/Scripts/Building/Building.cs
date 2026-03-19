@@ -33,7 +33,7 @@ namespace ARIA.Building
 
         private void Start()
         {
-            // 【核心修复】：让鼠标点击自动穿透所有的"范围检测圈(Trigger)"，只命中建筑实体！
+            // 核心修复：射线检测穿透所有 Trigger
             Physics2D.queriesHitTriggers = false;
 
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -44,17 +44,38 @@ namespace ARIA.Building
             originalColor = spriteRenderer.color;
             originalScale = transform.localScale;
             
-            // 1. 安全地获取或动态添加碰撞体
-            BoxCollider2D col = GetComponent<BoxCollider2D>();
-            if (col == null)
-            {
-                col = gameObject.AddComponent<BoxCollider2D>();
-            }
+            // 1. 获取当前物体上所有的碰撞体
+            Collider2D[] allColliders = GetComponents<Collider2D>();
             
-            // 2. 自动适配 Collider 的大小，确保点击区域和建筑占地一样大
-            if (Data != null)
+            // 2. 寻找或创建一个"标准实体碰撞体"
+            // 这个碰撞体必须和建筑尺寸(SizeX, SizeY)严格一致，用于判定位置占用
+            BoxCollider2D mainBodyCollider = null;
+
+            foreach (var col in allColliders)
             {
-                col.size = new Vector2(Data.SizeX, Data.SizeY);
+                // 如果发现一个 BoxCollider 且尺寸正好等于建筑尺寸，我们认为它是"本体"
+                if (col is BoxCollider2D box && Data != null &&
+                    Mathf.Approximately(box.size.x, Data.SizeX) &&
+                    Mathf.Approximately(box.size.y, Data.SizeY))
+                {
+                    mainBodyCollider = box;
+                    mainBodyCollider.isTrigger = false; // 只有它不是 Trigger
+                }
+                else
+                {
+                    // 【关键修复】：所有其他的碰撞体（比如巨大的圆形、没调好的方框）
+                    // 全部强制转为 Trigger，这样它们就挡不住鼠标点击了
+                    col.isTrigger = true;
+                }
+            }
+
+            // 3. 如果没找到合适的本体碰撞体，代码自动补一个完美的
+            if (mainBodyCollider == null && Data != null)
+            {
+                mainBodyCollider = gameObject.AddComponent<BoxCollider2D>();
+                mainBodyCollider.size = new Vector2(Data.SizeX, Data.SizeY);
+                mainBodyCollider.offset = Vector2.zero;
+                mainBodyCollider.isTrigger = false;
             }
         }
 
