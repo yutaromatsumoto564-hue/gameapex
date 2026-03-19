@@ -25,8 +25,6 @@ namespace ARIA.Building
         public GameObject UpgradeEffectPrefab;
         public GameObject ProductionEffectPrefab;
 
-        public event Action<float> OnProductionProgress;
-
         private SpriteRenderer spriteRenderer;
         private Vector3 originalScale;
         private Color originalColor;
@@ -41,9 +39,18 @@ namespace ARIA.Building
             originalColor = spriteRenderer.color;
             originalScale = transform.localScale;
             
-            // 自动适配 Collider 的大小，确保点击区域和建筑一样大
+            // 1. 安全地获取或动态添加碰撞体
             BoxCollider2D col = GetComponent<BoxCollider2D>();
-            col.size = new Vector2(Data.SizeX, Data.SizeY);
+            if (col == null)
+            {
+                col = gameObject.AddComponent<BoxCollider2D>();
+            }
+            
+            // 2. 自动适配 Collider 的大小，确保点击区域和建筑占地一样大
+            if (Data != null)
+            {
+                col.size = new Vector2(Data.SizeX, Data.SizeY);
+            }
         }
 
         private void Update()
