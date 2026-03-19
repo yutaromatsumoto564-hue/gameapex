@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c11ece92072ea1a4881264c81a7df872, type: 3}
+  m_Name: resource_copper_ore
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Resource.ResourceData
+  ResourceId: resource_copper_ore
+  ResourceName: "\u94DC\u77FF\u77F3"
+  Description: "\u4ECE\u5730\u4E0B\u6316\u6398\u7684\u539F\u59CB\u94DC\u77FF\u77F3"
+  Icon: {fileID: 0}
+  Category: 0
+  Tier: 1
+  BaseValue: 8

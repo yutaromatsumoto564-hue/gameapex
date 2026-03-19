@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14757af803d94a942baf6881b14876fd, type: 3}
+  m_Name: enemy_armored
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Enemy.EnemyData
+  EnemyId: enemy_armored
+  EnemyName: "\u88C5\u7532\u866B"
+  Description: "\u9AD8\u62A4\u7532\u654C\u4EBA"
+  Icon: {fileID: 0}
+  MaxHealth: 300
+  Damage: 20
+  MoveSpeed: 1.8
+  Reward: 60
+  Type: 5
+  IsFlying: 0
+  IsBoss: 0
+  CanSlowTurrets: 0
+  CanExplode: 0
+  ExplosionDamage: 0
+  ExplosionRadius: 0
+  HasArmor: 1
+  ArmorPercentage: 50
+  CanSummon: 0
+  SummonEnemyId: 
+  SummonCount: 0
+  Drops: []
+  Prefab: {fileID: 2534573796401262101, guid: 1436b8227fec3264687402b69c019b93, type: 3}

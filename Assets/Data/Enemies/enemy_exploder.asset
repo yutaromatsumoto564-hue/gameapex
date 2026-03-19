@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14757af803d94a942baf6881b14876fd, type: 3}
+  m_Name: enemy_exploder
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Enemy.EnemyData
+  EnemyId: enemy_exploder
+  EnemyName: "\u81EA\u7206\u866B"
+  Description: "\u63A5\u8FD1\u5EFA\u7B51\u540E\u81EA\u7206"
+  Icon: {fileID: 0}
+  MaxHealth: 80
+  Damage: 0
+  MoveSpeed: 2.5
+  Reward: 30
+  Type: 4
+  IsFlying: 0
+  IsBoss: 0
+  CanSlowTurrets: 0
+  CanExplode: 1
+  ExplosionDamage: 100
+  ExplosionRadius: 3
+  HasArmor: 0
+  ArmorPercentage: 0
+  CanSummon: 0
+  SummonEnemyId: 
+  SummonCount: 0
+  Drops: []
+  Prefab: {fileID: 9104427417652574630, guid: 73f531a901bd57c4b90940bd72d5b648, type: 3}

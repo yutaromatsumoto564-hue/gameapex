@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7312a4d6a6d3e441a20379454d6e5a6, type: 3}
+  m_Name: tech_improved_mining
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Tech.TechData
+  TechId: tech_improved_mining
+  TechName: "\u6539\u8FDB\u91C7\u77FF"
+  Description: "\u63D0\u9AD8\u91C7\u77FF\u673A\u6548\u7387"
+  Icon: {fileID: 0}
+  Category: 1
+  Tier: 1
+  PrerequisiteTechIds: []
+  ResearchCosts:
+  - ResourceId: resource_iron_plate
+    Amount: 20
+  ResearchTime: 60
+  UnlockedBuildingIds: []
+  UnlockedCardIds: []
+  Bonuses:
+  - Type: 0
+    Value: 0.2

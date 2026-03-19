@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d7ac6a03e554348a5cc32fcadfe428, type: 3}
+  m_Name: building_lumber_mill
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Building.BuildingData
+  BuildingId: building_lumber_mill
+  BuildingName: "\u4F10\u6728\u5382"
+  Description: "\u81EA\u52A8\u91C7\u96C6\u6728\u6750"
+  Icon: {fileID: 0}
+  SizeX: 2
+  SizeY: 2
+  MaxHealth: 150
+  PowerConsumption: 30
+  PowerGeneration: 0
+  NetworkRange: 5
+  Category: 0
+  ProductionTime: 2
+  Inputs: []
+  Outputs:
+  - ResourceId: res_organic
+    Amount: 3
+  Damage: 0
+  AttackRange: 0
+  AttackSpeed: 1
+  CanTargetAir: 0
+  StorageCapacity: 0
+  RequiredTechIds: []

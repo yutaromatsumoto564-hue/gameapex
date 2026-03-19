@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14757af803d94a942baf6881b14876fd, type: 3}
+  m_Name: enemy_boss
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Enemy.EnemyData
+  EnemyId: enemy_boss
+  EnemyName: "\u866B\u65CFBoss"
+  Description: "\u5F3A\u5927\u7684Boss\u654C\u4EBA"
+  Icon: {fileID: 0}
+  MaxHealth: 5000
+  Damage: 50
+  MoveSpeed: 1
+  Reward: 500
+  Type: 8
+  IsFlying: 0
+  IsBoss: 1
+  CanSlowTurrets: 0
+  CanExplode: 1
+  ExplosionDamage: 200
+  ExplosionRadius: 5
+  HasArmor: 1
+  ArmorPercentage: 30
+  CanSummon: 1
+  SummonEnemyId: enemy_small
+  SummonCount: 5
+  Drops: []
+  Prefab: {fileID: 7807131844291801459, guid: 8e8d47f0694a97b499f83fe870470594, type: 3}

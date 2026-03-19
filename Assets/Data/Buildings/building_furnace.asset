@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d7ac6a03e554348a5cc32fcadfe428, type: 3}
+  m_Name: building_furnace
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Building.BuildingData
+  BuildingId: building_furnace
+  BuildingName: "\u7194\u7089"
+  Description: "\u5C06\u77FF\u77F3\u7CBE\u70BC\u6210\u91D1\u5C5E"
+  Icon: {fileID: 0}
+  SizeX: 2
+  SizeY: 2
+  MaxHealth: 300
+  PowerConsumption: 80
+  PowerGeneration: 0
+  NetworkRange: 5
+  Category: 1
+  ProductionTime: 4
+  Inputs: []
+  Outputs: []
+  Damage: 0
+  AttackRange: 0
+  AttackSpeed: 1
+  CanTargetAir: 0
+  StorageCapacity: 0
+  RequiredTechIds: []

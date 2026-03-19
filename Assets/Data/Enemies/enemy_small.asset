@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14757af803d94a942baf6881b14876fd, type: 3}
+  m_Name: enemy_small
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Enemy.EnemyData
+  EnemyId: enemy_small
+  EnemyName: "\u5C0F\u578B\u866B\u65CF"
+  Description: "\u57FA\u7840\u654C\u4EBA"
+  Icon: {fileID: 0}
+  MaxHealth: 50
+  Damage: 5
+  MoveSpeed: 3
+  Reward: 10
+  Type: 0
+  IsFlying: 0
+  IsBoss: 0
+  CanSlowTurrets: 0
+  CanExplode: 0
+  ExplosionDamage: 0
+  ExplosionRadius: 0
+  HasArmor: 0
+  ArmorPercentage: 0
+  CanSummon: 0
+  SummonEnemyId: 
+  SummonCount: 0
+  Drops: []
+  Prefab: {fileID: 5737405258376071617, guid: 34beb206d9a87e24c99cb2e081168830, type: 3}

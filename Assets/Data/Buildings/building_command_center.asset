@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4d7ac6a03e554348a5cc32fcadfe428, type: 3}
+  m_Name: building_command_center
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Building.BuildingData
+  BuildingId: building_command_center
+  BuildingName: "\u6307\u6325\u4E2D\u5FC3"
+  Description: "\u4F60\u7684\u57FA\u5730\u6838\u5FC3\u5EFA\u7B51\uFF0C\u7F13\u6162\u4EA7\u751F\u80FD\u91CF"
+  Icon: {fileID: 0}
+  SizeX: 5
+  SizeY: 5
+  MaxHealth: 5000
+  PowerConsumption: 0
+  PowerGeneration: 0
+  NetworkRange: 15
+  Category: 0
+  ProductionTime: 5
+  Inputs: []
+  Outputs:
+  - ResourceId: res_energy
+    Amount: 5
+  Damage: 0
+  AttackRange: 0
+  AttackSpeed: 1
+  CanTargetAir: 0
+  StorageCapacity: 0
+  RequiredTechIds: []

@@ -1,0 +1,47 @@
+{
+  "name": "ARIA.Awakening",
+  "version": "0.1.0",
+  "description": "ARIA: 异星觉醒 - 工厂建造塔防游戏",
+  "unity": "2022.3",
+  "author": "GameApex Team",
+  "scripts": {
+    "core": [
+      "Scripts/Core/GameManager.cs",
+      "Scripts/Core/SaveSystem.cs",
+      "Scripts/Core/EventManager.cs"
+    ],
+    "card": [
+      "Scripts/Card/CardData.cs",
+      "Scripts/Card/CardManager.cs",
+      "Scripts/Card/CardUI.cs"
+    ],
+    "building": [
+      "Scripts/Building/BuildingData.cs",
+      "Scripts/Building/BuildingManager.cs",
+      "Scripts/Building/Building.cs"
+    ],
+    "resource": [
+      "Scripts/Resource/ResourceNetwork.cs",
+      "Scripts/Resource/ResourceManager.cs",
+      "Scripts/Resource/ResourceData.cs"
+    ],
+    "power": [
+      "Scripts/Power/PowerNetwork.cs",
+      "Scripts/Power/PowerManager.cs"
+    ],
+    "enemy": [
+      "Scripts/Enemy/EnemyData.cs",
+      "Scripts/Enemy/EnemyManager.cs",
+      "Scripts/Enemy/Enemy.cs"
+    ],
+    "daynight": [
+      "Scripts/DayNight/DayNightCycle.cs",
+      "Scripts/DayNight/WaveManager.cs"
+    ],
+    "ui": [
+      "Scripts/UI/UIManager.cs",
+      "Scripts/UI/CardBarUI.cs",
+      "Scripts/UI/ResourceBarUI.cs"
+    ]
+  }
+}

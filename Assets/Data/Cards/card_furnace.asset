@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57670d2160bafea4cb6123bc9dd02bfc, type: 3}
+  m_Name: card_furnace
+  m_EditorClassIdentifier: Assembly-CSharp::ARIA.Card.CardData
+  CardId: card_furnace
+  CardName: "\u7194\u7089\u5361"
+  Description: "\u7194\u7089\u5EFA\u7B51\u5361"
+  Icon: {fileID: 0}
+  Type: 2
+  Rarity: 1
+  CanStack: 1
+  MaxStack: 99
+  BuildingData: {fileID: 11400000, guid: 9ffd73d885a88ef41973e40674008df0, type: 2}
+  BuildingSizeX: 2
+  BuildingSizeY: 2
+  CraftRequirements: []
+  CraftOutputCount: 1
+  SellPrice: 0
+  BuyPrice: 0
