@@ -21,8 +21,8 @@ MonoBehaviour:
   CanStack: 1
   MaxStack: 99
   BuildingData: {fileID: 11400000, guid: 5419168b62b4c984588d3f003195109a, type: 2}
-  BuildingSizeX: 5
-  BuildingSizeY: 5
+  BuildingSizeX: 1
+  BuildingSizeY: 1
   CraftRequirements: []
   CraftOutputCount: 1
   SellPrice: 0

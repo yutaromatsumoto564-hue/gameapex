@@ -16,8 +16,8 @@ MonoBehaviour:
   BuildingName: "\u6307\u6325\u4E2D\u5FC3"
   Description: "\u4F60\u7684\u57FA\u5730\u6838\u5FC3\u5EFA\u7B51\uFF0C\u7F13\u6162\u4EA7\u751F\u80FD\u91CF"
   Icon: {fileID: 0}
-  SizeX: 5
-  SizeY: 5
+  SizeX: 1
+  SizeY: 1
   MaxHealth: 5000
   PowerConsumption: 0
   PowerGeneration: 0
@@ -28,6 +28,9 @@ MonoBehaviour:
   Outputs:
   - ResourceId: res_energy
     Amount: 5
+  ProgressRequired: 10
+  PassiveProgressPerSecond: 1
+  ClickProgress: 1
   Damage: 0
   AttackRange: 0
   AttackSpeed: 1
