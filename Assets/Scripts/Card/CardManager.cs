@@ -116,14 +116,20 @@ namespace ARIA.Card
         {
             StartingCards = new List<CardStack>();
             
-            // 给玩家一些基础卡牌
-            var basicCards = AllCards.Where(c => c.Rarity == CardRarity.Common).Take(4).ToList();
-            foreach (var card in basicCards)
+            var buildingCards = AllCards.Where(c => c.Type == CardType.Building).ToList();
+            var resourceCards = AllCards.Where(c => c.Type == CardType.Resource).ToList();
+            
+            foreach (var card in buildingCards)
             {
-                StartingCards.Add(new CardStack { Card = card, Amount = 3 });
+                StartingCards.Add(new CardStack { Card = card, Amount = 5 });
             }
             
-            Debug.Log($"Created {StartingCards.Count} default starting cards");
+            foreach (var card in resourceCards)
+            {
+                StartingCards.Add(new CardStack { Card = card, Amount = 5 });
+            }
+            
+            Debug.Log($"Created {StartingCards.Count} default starting cards for testing");
         }
 
         public CardData GetCardData(string cardId)

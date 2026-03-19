@@ -34,3 +34,6 @@ MonoBehaviour:
   CanTargetAir: 0
   StorageCapacity: 0
   RequiredTechIds: []
+  NextUpgradeId: 
+  UpgradeCost: 0
+  UpgradeResources: []

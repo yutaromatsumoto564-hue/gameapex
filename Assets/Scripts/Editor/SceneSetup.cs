@@ -4,6 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Linq;
+using ARIA.UI;
 
 namespace ARIA.Editor
 {
@@ -177,6 +178,21 @@ namespace ARIA.Editor
             {
                 Debug.LogError("找不到GameBootstrapper");
                 return;
+            }
+
+            // 查找Managers容器
+            GameObject managers = GameObject.Find("Managers");
+            if (managers == null)
+            {
+                managers = new GameObject("Managers");
+            }
+
+            // 添加BuildingPlacementController
+            var placementController = managers.GetComponent<BuildingPlacementController>();
+            if (placementController == null)
+            {
+                placementController = managers.AddComponent<BuildingPlacementController>();
+                Debug.Log("BuildingPlacementController已添加到场景");
             }
 
             // 加载所有数据资源

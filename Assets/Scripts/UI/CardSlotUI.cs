@@ -200,9 +200,28 @@ namespace ARIA.UI
         
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (currentCard == null || currentCard.Type != CardType.Building) return;
+            Debug.Log($"尝试拖拽卡牌: {currentCard?.CardName}, 类型: {currentCard?.Type}");
 
-            BuildingPlacementController.Instance?.StartDragPreview(currentCard);
+            if (currentCard == null) 
+            {
+                Debug.LogWarning("拖拽失败：当前卡槽为空");
+                return;
+            }
+            
+            if (currentCard.Type != CardType.Building) 
+            {
+                Debug.LogWarning("拖拽失败：这不是一张建筑卡，无法放置");
+                return;
+            }
+
+            if (BuildingPlacementController.Instance == null)
+            {
+                Debug.LogError("严重错误：场景中找不到 BuildingPlacementController 实例！");
+                return;
+            }
+
+            Debug.Log($"开始拖拽建筑卡: {currentCard.CardName}");
+            BuildingPlacementController.Instance.StartDragPreview(currentCard);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -214,13 +233,18 @@ namespace ARIA.UI
 
         public void OnEndDrag(PointerEventData eventData)
         {
+            Debug.Log($"结束拖拽卡牌: {currentCard?.CardName}");
+
             if (currentCard == null || currentCard.Type != CardType.Building) return;
 
             bool success = BuildingPlacementController.Instance?.EndDragPreview() ?? false;
             
+            Debug.Log($"建筑放置结果: {(success ? "成功" : "失败")}");
+            
             if (success)
             {
                 CardManager.Instance.RemoveCard(currentCard.CardId, 1);
+                Debug.Log($"消耗卡牌: {currentCard.CardName}");
             }
         }
     }

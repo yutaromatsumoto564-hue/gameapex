@@ -63,11 +63,10 @@ namespace ARIA.Building
             }
             originalColor = spriteRenderer.color;
 
-            if (data.SizeX > 1 || data.SizeY > 1)
-            {
-                Vector3 scale = new Vector3(data.SizeX, data.SizeY, 1f);
-                transform.localScale = scale;
-            }
+            // 应用建筑大小缩放
+            Vector3 scale = new Vector3(data.SizeX, data.SizeY, 1f);
+            transform.localScale = scale;
+            Debug.Log($"[建筑缩放] {data.BuildingName} 大小: {data.SizeX}x{data.SizeY}, 缩放: {scale}");
             
             // 检查资源产出配置
             if (data.Outputs != null && data.Outputs.Count > 0)

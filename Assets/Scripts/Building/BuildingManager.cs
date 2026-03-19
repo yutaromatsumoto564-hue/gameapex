@@ -72,6 +72,10 @@ namespace ARIA.Building
 
             BuildingData buildingData = cardData.BuildingData;
             
+            // 使用卡牌上的大小，确保检测和实际放置使用相同的大小
+            int sizeX = cardData.BuildingSizeX;
+            int sizeY = cardData.BuildingSizeY;
+            
             // 如果没有设置预制体，创建一个默认的
             GameObject buildingObj;
             if (BuildingPrefab != null)
@@ -90,7 +94,7 @@ namespace ARIA.Building
                 
                 // 添加Collider
                 BoxCollider2D collider = buildingObj.AddComponent<BoxCollider2D>();
-                collider.size = new Vector2(buildingData.SizeX, buildingData.SizeY);
+                collider.size = new Vector2(sizeX, sizeY);
             }
             
             Building building = buildingObj.GetComponent<Building>();
@@ -101,9 +105,6 @@ namespace ARIA.Building
 
             building.Initialize(nextBuildingInstanceId++, buildingData, position);
             
-            int sizeX = buildingData.SizeX;
-            int sizeY = buildingData.SizeY;
-
             for (int x = position.x; x < position.x + sizeX; x++)
             {
                 for (int y = position.y; y < position.y + sizeY; y++)
