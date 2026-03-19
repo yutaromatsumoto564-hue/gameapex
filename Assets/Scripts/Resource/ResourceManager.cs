@@ -209,6 +209,11 @@ namespace ARIA.Resource
             return total;
         }
 
+        public bool HasAvailableCapacity(int requiredAmount = 1)
+        {
+            return GetTotalStored() + requiredAmount <= GetTotalCapacity();
+        }
+
         public float GetStoragePercentage()
         {
             int capacity = GetTotalCapacity();

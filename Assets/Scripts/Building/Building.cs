@@ -17,6 +17,7 @@ namespace ARIA.Building
         public int CurrentHealth;
         public bool IsActive = true;
         public bool IsPowered = true;
+        public bool IsConnectedToNetwork = true;
         public bool IsProducing = false;
 
         [Header("Production")]
@@ -84,10 +85,12 @@ namespace ARIA.Building
             if (!IsActive) return;
 
             UpdatePowerStatus();
+            UpdateNetworkStatus();
 
             if (!IsPowered && Data.PowerConsumption > 0) return;
 
-            // 自动维修
+            if (!IsConnectedToNetwork && Data.Category != BuildingCategory.Defense) return;
+
             if (AutoRepair && CurrentHealth < Data.MaxHealth)
             {
                 UpdateAutoRepair();
@@ -132,6 +135,12 @@ namespace ARIA.Building
             UpdateVisualState();
         }
 
+        private void UpdateNetworkStatus()
+        {
+            IsConnectedToNetwork = ResourceNetwork.Instance?.IsBuildingConnected(this) ?? false;
+            UpdateVisualState();
+        }
+
         private void UpdateProduction()
         {
             if (Data.Inputs.Count == 0 && Data.Outputs.Count == 0) return;
@@ -165,6 +174,15 @@ namespace ARIA.Building
                     return false;
                 }
             }
+
+            int totalOutput = 0;
+            foreach (var output in Data.Outputs) totalOutput += output.Amount;
+            
+            if (totalOutput > 0 && !ResourceManager.Instance.HasAvailableCapacity(totalOutput))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -215,6 +233,16 @@ namespace ARIA.Building
         {
             if (Data.Outputs == null || Data.Outputs.Count == 0) return;
             
+            int totalOutput = 0;
+            foreach (var output in Data.Outputs) totalOutput += output.Amount;
+            
+            if (!ResourceManager.Instance.HasAvailableCapacity(totalOutput))
+            {
+                IsProducing = false;
+                return;
+            }
+
+            IsProducing = true;
             ProductionTimer += Time.deltaTime;
 
             if (ProductionTimer >= Data.ProductionTime)
@@ -276,17 +304,17 @@ namespace ARIA.Building
             {
                 spriteRenderer.color = new Color(1f, 0.3f, 0.3f, 1f);
             }
-            else if (healthPercent <= 0.5f)
+            else if (!IsConnectedToNetwork && Data.Category != BuildingCategory.Defense)
             {
-                spriteRenderer.color = new Color(1f, 0.7f, 0.3f, 1f);
+                spriteRenderer.color = new Color(0.8f, 0.4f, 0.4f, 0.8f);
             }
-            else if (healthPercent <= 0.75f)
-            {
-                spriteRenderer.color = new Color(1f, 1f, 0.7f, 1f);
-            }
-            else if (!IsPowered)
+            else if (!IsPowered && Data.PowerConsumption > 0)
             {
                 spriteRenderer.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+            else if (!IsProducing && (Data.Category == BuildingCategory.Production || Data.Category == BuildingCategory.Resource))
+            {
+                spriteRenderer.color = new Color(0.8f, 0.8f, 0.8f, 1f);
             }
             else
             {
