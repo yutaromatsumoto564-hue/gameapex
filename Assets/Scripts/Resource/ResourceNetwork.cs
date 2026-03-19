@@ -39,7 +39,7 @@ namespace ARIA.Resource
             connectedBuildings.Add(building);
 
             if (building.Data.Category == BuildingCategory.Storage || 
-                building.Data.BuildingId == "command_center")
+                building.Data.BuildingId == "building_command_center")
             {
                 networkHubs.Add(building);
             }
@@ -128,7 +128,7 @@ namespace ARIA.Resource
 
         private int GetEffectiveRange(Building.Building building)
         {
-            if (building.Data.BuildingId == "command_center")
+            if (building.Data.BuildingId == "building_command_center")
             {
                 return CommandCenterRange;
             }

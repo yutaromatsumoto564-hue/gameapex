@@ -27,7 +27,7 @@ namespace ARIA
         public GameObject UIManagerPrefab;
 
         [Header("Scene Setup")]
-        public bool CreateInitialCommandCenter = true;
+        public bool CreateInitialCommandCenter = false;
         public Vector2Int CommandCenterPosition = new Vector2Int(25, 25);
 
         private void Awake()

@@ -76,16 +76,19 @@ namespace ARIA.Building
             int sizeX = cardData.BuildingSizeX;
             int sizeY = cardData.BuildingSizeY;
             
+            // 计算精确的世界坐标
+            Vector2 exactWorldPos = GetWorldPosition(position, sizeX, sizeY);
+            
             // 如果没有设置预制体，创建一个默认的
             GameObject buildingObj;
             if (BuildingPrefab != null)
             {
-                buildingObj = Instantiate(BuildingPrefab, GetWorldPosition(position), Quaternion.identity);
+                buildingObj = Instantiate(BuildingPrefab, exactWorldPos, Quaternion.identity);
             }
             else
             {
                 buildingObj = new GameObject(buildingData.BuildingName);
-                buildingObj.transform.position = GetWorldPosition(position);
+                buildingObj.transform.position = exactWorldPos;
                 
                 // 添加SpriteRenderer
                 SpriteRenderer sr = buildingObj.AddComponent<SpriteRenderer>();
@@ -272,19 +275,41 @@ namespace ARIA.Building
             return result;
         }
 
-        public Vector2Int GetGridPosition(Vector2 worldPosition)
+        // ----------------- 完美的坐标系转换算法 -----------------
+
+        /// <summary>
+        /// (核心) 给定一个世界坐标（例如鼠标位置，视为建筑中心），计算出该建筑左下角的网格坐标
+        /// </summary>
+        public Vector2Int GetGridPositionFromCenter(Vector2 centerWorldPos, int sizeX = 1, int sizeY = 1)
         {
-            int x = Mathf.FloorToInt((worldPosition.x - GridOrigin.x) / CellSize);
-            int y = Mathf.FloorToInt((worldPosition.y - GridOrigin.y) / CellSize);
+            // 计算鼠标所在的网格坐标（作为建筑中心）
+            int centerGridX = Mathf.RoundToInt((centerWorldPos.x - GridOrigin.x) / CellSize);
+            int centerGridY = Mathf.RoundToInt((centerWorldPos.y - GridOrigin.y) / CellSize);
+
+            // 根据建筑尺寸计算左下角的网格坐标，确保建筑中心在鼠标位置
+            int x = centerGridX - (sizeX - 1) / 2;
+            int y = centerGridY - (sizeY - 1) / 2;
+
             return new Vector2Int(x, y);
         }
 
-        public Vector2 GetWorldPosition(Vector2Int gridPosition)
+        /// <summary>
+        /// 根据建筑左下角的网格坐标和自身尺寸，推算出严格吸附网格后的【完美中心世界坐标】
+        /// </summary>
+        public Vector2 GetWorldPosition(Vector2Int gridPosition, int sizeX = 1, int sizeY = 1)
         {
             return new Vector2(
-                GridOrigin.x + gridPosition.x * CellSize + CellSize * 0.5f,
-                GridOrigin.y + gridPosition.y * CellSize + CellSize * 0.5f
+                GridOrigin.x + gridPosition.x * CellSize + (sizeX * CellSize) * 0.5f,
+                GridOrigin.y + gridPosition.y * CellSize + (sizeY * CellSize) * 0.5f
             );
+        }
+
+        /// <summary>
+        /// 兼容旧方法的重载 (如果获取单格的位置)
+        /// </summary>
+        public Vector2Int GetGridPosition(Vector2 worldPosition)
+        {
+            return GetGridPositionFromCenter(worldPosition, 1, 1);
         }
 
         private bool IsPositionValid(Vector2Int position, int sizeX, int sizeY)

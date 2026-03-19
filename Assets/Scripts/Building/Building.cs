@@ -54,7 +54,7 @@ namespace ARIA.Building
             ProductionProgress = 0f;
             ProductionTimer = 0f;
 
-            transform.position = BuildingManager.Instance.GetWorldPosition(gridPosition);
+            transform.position = BuildingManager.Instance.GetWorldPosition(gridPosition, Data.SizeX, Data.SizeY);
 
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)

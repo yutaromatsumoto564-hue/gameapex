@@ -112,7 +112,7 @@ namespace ARIA.Editor
             // 创建GameBootstrapper
             GameObject bootstrapper = new GameObject("GameBootstrapper");
             var bootstrapperComponent = bootstrapper.AddComponent<GameBootstrapper>();
-            bootstrapperComponent.CreateInitialCommandCenter = true;
+            bootstrapperComponent.CreateInitialCommandCenter = false;
             bootstrapperComponent.CommandCenterPosition = new Vector2Int(25, 25);
 
             // 创建Managers容器

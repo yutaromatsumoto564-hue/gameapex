@@ -32,45 +32,49 @@ namespace ARIA.UI
                 previewObject = new GameObject("BuildingPreview");
                 previewRenderer = previewObject.AddComponent<SpriteRenderer>();
                 previewRenderer.sortingOrder = 9999;
-                Debug.Log("成功创建了虚影 GameObject！");
             }
 
             if (cardData.Icon == null)
             {
-                Debug.LogWarning($"【注意】卡牌 {cardData.CardName} 没有配置 Icon，使用默认方块作为预览！");
                 previewRenderer.sprite = CreateDefaultSprite();
             }
             else
             {
-                previewRenderer.sprite = cardData.Icon; 
+                previewRenderer.sprite = cardData.Icon;
             }
             
-            float scale = Mathf.Max(cardData.BuildingSizeX, cardData.BuildingSizeY) * 1.0f;
-            previewObject.transform.localScale = new Vector3(scale, scale, 1f);
-            Debug.Log($"设置预览大小: 建筑尺寸 {cardData.BuildingSizeX}x{cardData.BuildingSizeY}, 缩放 {scale}x");
+            // 精确缩放：按照建筑实际的 X 和 Y 占地面积进行拉伸，确保虚影大小绝对正确
+            previewObject.transform.localScale = new Vector3(cardData.BuildingSizeX, cardData.BuildingSizeY, 1f);
+            
+            // 为了让预览图有一点半透明效果，重置默认颜色
+            previewRenderer.color = new Color(1f, 1f, 1f, 0.5f);
             
             previewObject.SetActive(true);
-            
-            Debug.Log($"开始拖拽建筑: {cardData.CardName}");
         }
 
         public void UpdateDragPreview(Vector2 screenPosition)
         {
             if (draggingCard == null || previewObject == null) return;
 
-            Vector3 mousePos = new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z));
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+            // 1. 获取鼠标真实的 2D 世界坐标
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Mathf.Abs(Camera.main.transform.position.z)));
+            Vector2 mouseWorldPos2D = new Vector2(mousePos.x, mousePos.y);
             
-            currentGridPos = BuildingManager.Instance.GetGridPosition(worldPos);
-            Vector2 snappedWorldPos = BuildingManager.Instance.GetWorldPosition(currentGridPos);
-            
-            previewObject.transform.position = new Vector3(snappedWorldPos.x, snappedWorldPos.y, 0f);
+            int sizeX = draggingCard.BuildingSizeX;
+            int sizeY = draggingCard.BuildingSizeY;
 
+            // 2. 核心：鼠标代表建筑中心。计算出如果以此为中心，建筑左下角所在的网格坐标 (GridPos)
+            currentGridPos = BuildingManager.Instance.GetGridPositionFromCenter(mouseWorldPos2D, sizeX, sizeY);
+            
+            // 3. 将计算出的网格坐标反推回中心世界坐标，实现严格吸附 (Snapping)
+            Vector2 snappedCenterPos = BuildingManager.Instance.GetWorldPosition(currentGridPos, sizeX, sizeY);
+            
+            // 4. 更新虚影位置
+            previewObject.transform.position = new Vector3(snappedCenterPos.x, snappedCenterPos.y, 0f);
+
+            // 5. 判断该位置是否合法并改变颜色
             canPlaceCurrent = BuildingManager.Instance.CanPlaceBuilding(draggingCard, currentGridPos);
-            
-            previewRenderer.color = canPlaceCurrent ? new Color(0f, 1f, 0f, 0.8f) : new Color(1f, 0f, 0f, 0.8f);
-            
-            Debug.Log($"拖拽位置 - 屏幕: {screenPosition}, 世界: {worldPos}, 网格: {currentGridPos}, 可放置: {canPlaceCurrent}");
+            previewRenderer.color = canPlaceCurrent ? ValidColor : InvalidColor;
         }
 
         public bool EndDragPreview()
