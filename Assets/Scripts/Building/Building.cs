@@ -36,49 +36,10 @@ namespace ARIA.Building
             // 1. 确保全局设置正确
             Physics2D.queriesHitTriggers = false;
 
-            if (Data == null) {
-                Debug.LogError($"[Building] {gameObject.name} 缺少 BuildingData 数据！");
-                return;
-            }
-
             spriteRenderer = GetComponent<SpriteRenderer>();
             if (spriteRenderer == null)
             {
                 spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-            }
-            originalColor = spriteRenderer.color;
-            originalScale = transform.localScale;
-
-            // 2. 获取所有碰撞体并强制分类
-            Collider2D[] allColliders = GetComponents<Collider2D>();
-            bool foundMainCollider = false;
-
-            foreach (var col in allColliders)
-            {
-                // 逻辑：如果是 BoxCollider2D 且尺寸接近数据定义的 Size，则视为"实体"
-                if (col is BoxCollider2D box &&
-                    Mathf.Approximately(box.size.x, Data.SizeX) &&
-                    Mathf.Approximately(box.size.y, Data.SizeY))
-                {
-                    box.isTrigger = false;
-                    foundMainCollider = true;
-                    Debug.Log($"[Building] {gameObject.name} 的实体碰撞体已就绪。");
-                }
-                else
-                {
-                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部强转为 Trigger
-                    col.isTrigger = true;
-                    Debug.Log($"[Building] {gameObject.name} 检测到范围圈 {col.GetType().Name}，已强制设为 Trigger。");
-                }
-            }
-
-            // 3. 防呆：如果完全没找到合适的 BoxCollider，就动态补一个
-            if (!foundMainCollider)
-            {
-                BoxCollider2D newBox = gameObject.AddComponent<BoxCollider2D>();
-                newBox.size = new Vector2(Data.SizeX, Data.SizeY);
-                newBox.isTrigger = false;
-                Debug.LogWarning($"[Building] {gameObject.name} 未找到匹配尺寸的 BoxCollider，已自动创建。");
             }
         }
 
@@ -208,6 +169,39 @@ namespace ARIA.Building
             // 设置建筑缩放
             transform.localScale = new Vector3(data.SizeX, data.SizeY, 1f);
             originalScale = transform.localScale;
+            originalColor = spriteRenderer.color;
+
+            // 2. 获取所有碰撞体并强制分类
+            Collider2D[] allColliders = GetComponents<Collider2D>();
+            bool foundMainCollider = false;
+
+            foreach (var col in allColliders)
+            {
+                // 逻辑：如果是 BoxCollider2D 且尺寸接近数据定义的 Size，则视为"实体"
+                if (col is BoxCollider2D box &&
+                    Mathf.Approximately(box.size.x, Data.SizeX) &&
+                    Mathf.Approximately(box.size.y, Data.SizeY))
+                {
+                    box.isTrigger = false;
+                    foundMainCollider = true;
+                    Debug.Log($"[Building] {gameObject.name} 的实体碰撞体已就绪。");
+                }
+                else
+                {
+                    // 关键点：将所有其他的（圆形的、尺寸不对的）全部强转为 Trigger
+                    col.isTrigger = true;
+                    Debug.Log($"[Building] {gameObject.name} 检测到范围圈 {col.GetType().Name}，已强制设为 Trigger。");
+                }
+            }
+
+            // 3. 防呆：如果完全没找到合适的 BoxCollider，就动态补一个
+            if (!foundMainCollider)
+            {
+                BoxCollider2D newBox = gameObject.AddComponent<BoxCollider2D>();
+                newBox.size = new Vector2(Data.SizeX, Data.SizeY);
+                newBox.isTrigger = false;
+                Debug.LogWarning($"[Building] {gameObject.name} 未找到匹配尺寸的 BoxCollider，已自动创建。");
+            }
 
             IsActive = true;
         }
